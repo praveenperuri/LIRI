@@ -30,6 +30,12 @@ inquirer.prompt([
         case "Search in Twitter?":
             inputTwitterRequest();
             break;
+        case "Get geocode of a location?":
+        	getGeocodeRequest();
+        	break;
+        case "Get weather at a location?":
+        	getWeatherRequest();
+        	break;
         default:
             console.log("BAD REQUEST");
             break;
@@ -90,35 +96,8 @@ function getSpotifySearchTerm(type) {
 }
 
 
-function inputMovieRequest() {
-    inquirer.prompt([{
-        type: "input",
-        name: "movieReq",
-        message: "Type name of the movie?"
-    }]).then(function(user) {
-        if (user.movieReq !== null || user.movieReq !== undefined) {
-            getMovieResults(user.movieReq);
-        }
-    });
 
-}
 
-function inputTwitterRequest() {
-    inquirer.prompt([{
-        type: "input",
-        name: "twitterReq",
-        message: "Type search term for twitter?"
-    }]).then(function(user) {
-
-        if (user.twitterReq !== null || user.twitterReq !== undefined) {
-            var searchString = user.twitterReq;
-            console.log(searchString);
-            getTwitterResults(searchString);
-        }
-
-    });
-
-}
 
 
 
@@ -165,6 +144,20 @@ function getSpotifyResults(type, input) {
 
 }
 
+
+function inputMovieRequest() {
+    inquirer.prompt([{
+        type: "input",
+        name: "movieReq",
+        message: "Type name of the movie?"
+    }]).then(function(user) {
+        if (user.movieReq !== null || user.movieReq !== undefined) {
+            getMovieResults(user.movieReq);
+        }
+    });
+
+}
+
 function getMovieResults(input) {
     //make api call and log results	
     //omdbrequest
@@ -195,6 +188,23 @@ function getMovieResults(input) {
             console.log("The movie's rating is: " + JSON.parse(body).imdbRating);
         }
     });
+}
+
+function inputTwitterRequest() {
+    inquirer.prompt([{
+        type: "input",
+        name: "twitterReq",
+        message: "Type search term for twitter?"
+    }]).then(function(user) {
+
+        if (user.twitterReq !== null || user.twitterReq !== undefined) {
+            var searchString = user.twitterReq;
+            console.log(searchString);
+            getTwitterResults(searchString);
+        }
+
+    });
+
 }
 
 function getTwitterResults(input) {
@@ -229,13 +239,59 @@ function getTwitterResults(input) {
 
 function getGeocodeRequest() {
 
+	inquirer.prompt([
+
+  {
+    type: "input",
+    name: "userInput",
+    message: "Which location or landmark would you like to geocode?"
+  }
+
+// After the prompt, store the user's response in a variable called location.
+]).then(function(location) {
+
+  // console.log(location.userInput);
+
+  // Then use the Google Geocoder to Geocode the address
+  geocoder.geocode(location.userInput, function(err, data) {
+
+    console.log(JSON.stringify(data, null, 2));
+  });
+
+});
+
 }
+
+
 
 function getWeatherRequest() {
 
+  inquirer.prompt([
+  {
+    type: "input",
+    name: "userInput",
+    message: "Type location or landmark to get current weather?"
+  }
+]).then(function(location) {
+
+	if(location.userInput !== undefined && location.userInput !== null) {
+
+		weather.find({ search: location.userInput, degreeType: "F" }, function(err, result) {
+
+		  if (err) {
+		    console.log(err);
+		  }
+		  console.log(JSON.stringify(result, null, 4));
+
+		});
+	} else {
+		console.log('Please make a valid entry !!')
+	}
+
+});
+
+
 }
-
-
 
 
 
